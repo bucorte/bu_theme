@@ -1,0 +1,63 @@
+<?php
+$translate = $this->plugin('translate');
+$escape = $this->plugin('escapeHtml');
+
+$this->htmlElement('body')->appendAttribute('class', 'item-set resource browse');
+?>
+
+<?php echo $this->pageTitle($translate('Item sets'), 2); ?>
+
+<?php echo $this->searchFilters(); ?>
+
+<div class="browse-controls">
+    <?php echo $this->pagination(); ?>
+    <?php echo $this->hyperlink($translate('Advanced search'), $this->url(null, ['action' => 'search'], true), ['class' => 'advanced-search']); ?>
+</div>
+
+<?php $this->trigger('view.browse.before'); ?>
+<ul class="resource-list">
+<?php
+$headingTerm = $this->siteSetting('browse_heading_property_term');
+$bodyTerm = $this->siteSetting('browse_body_property_term');
+foreach ($itemSets as $itemSet):
+    $heading = $headingTerm ? $itemSet->value($headingTerm, ['default' => $translate('[Untitled]')]) : $itemSet->displayTitle();
+    $body = $bodyTerm ? $itemSet->value($bodyTerm) : $itemSet->itemCount();//$itemSet->displayDescription();
+?>
+<div class="card">
+    <a href="<?php echo $itemSet->url($heading); ?>">
+  <div>
+      <li class="item-set resource">
+          <?php echo $this->thumbnail($itemSet, 'medium', ['title' => $heading]); ?>
+          <h4><?php echo $heading; ?></h4>
+          <?php if ($body): ?>
+            <div class="documentsnumber"><?php echo $body." documents"; ?>
+            </div>
+          <?php endif; ?>
+      </li>
+    </div>
+      </a>
+    <div class="abstractCard">
+              <div class="dropdown is-up">
+                <div class="dropdown-trigger">
+                  <button class="button" aria-haspopup="true" aria-controls="dropdown-menu2">
+                    <span><?php echo $translate('Description'); ?></span>
+                    <span class="icon is-small">
+                      <i class="fas fa-angle-down" aria-hidden="true"></i>
+                    </span>
+                  </button>
+                </div>
+                <div class="dropdown-menu" id="dropdown-menu2" role="menu">
+                  <div class="dropdown-content">
+                    <div class="dropdown-item">
+                      <p><?php echo $itemSet->displayDescription(); ?></p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+    </div>
+
+</div>
+<?php endforeach; ?>
+</ul>
+<?php $this->trigger('view.browse.after'); ?>
+<?php echo $this->pagination(); ?>

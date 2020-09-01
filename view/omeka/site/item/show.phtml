@@ -1,0 +1,79 @@
+<script>
+ window.onload = function(){
+   let element = document.getElementsByTagName("header");
+    element[0].style.background = 'none';
+    element[0].style.height = "200px";
+ };
+
+function openNav() {
+document.getElementById("information").style.width = "350px";
+}
+
+function closeNav() {
+document.getElementById("information").style.width = "0";
+}
+</script>
+<?php
+$translate = $this->plugin('translate');
+$escape = $this->plugin('escapeHtml');
+$this->htmlElement('body')->appendAttribute('class', 'item resource show');
+$embedMedia = $this->siteSetting('item_media_embed', false);
+$itemMedia = $item->media();
+?>
+
+<div class="pdf">
+  <?php echo $this->pageTitle($item->displayTitle(), 2); ?>
+  <div class="mediaNav">
+    <button class="button is-info" onclick="openNav()">Informations</button>
+    <a href="#citation"><button class="button is-info" >Citation</button></a>
+    <a href="#mapping-section" ><button class="button is-info" >Carte</button></a>
+    <a href="#similar" ><button class="button is-info" >Mots clés</button></a>
+  </div>
+  <?php if(count($itemMedia) > 1): ?>
+    <?php foreach ($itemMedia as $url): ?>
+      <iframe src="<?php echo $url->originalUrl(); ?>" height="700px" width="800px">
+     </iframe>
+    <?php endforeach;?>
+<?php else: ?>
+  <iframe src="<?php echo $itemMedia[0]->originalUrl(); ?>" height="700px" width="800px">
+ </iframe>
+<?php endif; ?>
+</div>
+<h2 id="citation"> Citer ce document </h2>
+<?php $this->trigger('view.show.before'); ?>
+<?php if ($embedMedia && $itemMedia): ?>
+    <div class="media-embeds">
+    <?php foreach ($itemMedia as $media):
+        echo $media->render();
+    endforeach;
+    ?>
+    </div>
+<?php endif; ?>
+<div id="information" class="information">
+<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+<?php echo $item->displayValues(); ?>
+
+</div>
+
+<?php if (!$embedMedia && $itemMedia): ?>
+<div class="media-list">
+    <?php foreach ($itemMedia as $media): ?>
+    <?php endforeach; ?>
+</div>
+<?php endif; ?>
+
+
+
+<?php
+$page = $this->params()->fromQuery('page', 1);
+$property = $this->params()->fromQuery('property');
+$subjectValues = $item->displaySubjectValues($page, 25, $property);
+?>
+<?php if ($subjectValues): ?>
+<div id="item-linked">
+    <h3><?php echo $translate('Linked resources'); ?></h3>
+    <?php echo $subjectValues; ?>
+</div>
+<?php endif; ?>
+
+<?php $this->trigger('view.show.after'); ?>

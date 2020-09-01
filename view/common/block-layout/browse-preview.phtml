@@ -1,0 +1,101 @@
+<?php
+
+$translate = $this->plugin('translate');
+?>
+<div class="preview-block" id="preview">
+
+
+<?php if ($this->heading): ?>
+<h2><?php echo $this->heading; ?></h2>
+<br>
+
+<?php endif; ?>
+
+<ul class="resource-list preview">
+<?php
+$headingTerm = $this->siteSetting('browse_heading_property_term');
+$bodyTerm = $this->siteSetting('browse_body_property_term');
+foreach ($this->resources as $resource):
+    $heading = $headingTerm ? $resource->value($headingTerm, ['default' => $translate('[Untitled]')]) : $resource->displayTitle();
+    $body = $bodyTerm ? $resource->value($bodyTerm) : $resource->itemCount();
+?>
+
+
+  <div class="card">
+      <a href="<?php echo $resource->url($heading); ?>">
+    <div>
+        <li class="<?php echo $this->resourceType; ?> resource">
+            <?php echo $this->thumbnail($resource, 'medium', ['title' => $heading]); ?>
+            <h4><?php echo $heading; ?></h4>
+            <?php if ($body): ?>
+              <div class="documentsnumber"><?php echo $body." documents"; ?>
+              </div>
+            <?php endif; ?>
+        </li>
+      </div>
+        </a>
+      <div class="abstractCard">
+                <div class="dropdown is-up">
+                  <div class="dropdown-trigger">
+                    <button class="button" aria-haspopup="true" aria-controls="dropdown-menu2">
+                      <span><?php echo $translate('Description'); ?></span>
+                      <span class="icon is-small">
+                        <i class="fas fa-angle-down" aria-hidden="true"></i>
+                      </span>
+                    </button>
+                  </div>
+                  <div class="dropdown-menu" id="dropdown-menu2" role="menu">
+                    <div class="dropdown-content">
+                      <div class="dropdown-item">
+                        <p><?php echo $resource->displayDescription(); ?></p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+      </div>
+
+  </div>
+
+
+<?php endforeach; ?>
+</ul>
+
+
+
+</div>
+<script>
+// Get all dropdowns on the page that aren't hoverable.
+const dropdowns = document.querySelectorAll('.dropdown:not(.is-hoverable)');
+
+if (dropdowns.length > 0) {
+  // For each dropdown, add event handler to open on click.
+  dropdowns.forEach(function(el) {
+    el.addEventListener('click', function(e) {
+      e.stopPropagation();
+      el.classList.toggle('is-active');
+    });
+  });
+
+  // If user clicks outside dropdown, close it.
+  document.addEventListener('click', function(e) {
+    closeDropdowns();
+  });
+}
+
+/*
+ * Close dropdowns by removing `is-active` class.
+ */
+function closeDropdowns() {
+  dropdowns.forEach(function(el) {
+    el.classList.remove('is-active');
+  });
+}
+
+// Close dropdowns if ESC pressed
+document.addEventListener('keydown', function (event) {
+  let e = event || window.event;
+  if (e.key === 'Esc' || e.key === 'Escape') {
+    closeDropdowns();
+  }
+});
+</script>

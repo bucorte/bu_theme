@@ -1,0 +1,69 @@
+<?php
+$translate = $this->plugin('translate');
+$escape = $this->plugin('escapeHtml');
+$labelInfo = $this->setting('property_label_information');
+?>
+
+<?php
+  $arrayIcon = [
+          "Editeur" => "<i class='fas fa-book'></i>",
+          "Date" => "<i class='fas fa-calendar-day'></i>",
+          "Source" => "<i class='fas fa-map-marker-alt'></i>",
+          "Droits" => "<i class='fas fa-door-open'></i>",
+          "Créateur" => "<i class='fas fa-user-edit'></i>",
+          "Auteur" => "<i class='fas fa-user-edit'></i>",
+          "Titre" => "<i class='fas fa-book-reader'></i>",
+          "Langue" => "<i class='far fa-comments'></i>",
+          "Contributeur" => "<i class='fas fa-users'></i>",
+          "Collections" => "<i class='far fa-images'></i>",
+          "Type" => "<i class='fas fa-file'></i>",
+          "Abstract" => "<i class='fas fa-file'></i>",
+
+  ];
+ ?>
+<?php foreach ($values as $term => $propertyData): ?>
+    <?php if ($propertyData['property']->label() === "Subject" || $propertyData['property']->label() === "Relation" || $propertyData['property']->label() === "Abstract" ): ?>
+  <?php continue; ?>
+  <?php endif; ?>
+    <div class="property" style="width: 80%;">
+        <h6>
+        <?php if ($propertyData['alternate_label']): ?>
+        <?php echo $escape($propertyData['alternate_label']); ?>
+        <?php else: ?>
+        <?php if($propertyData['property']->label() == "Creator"): ?>
+      <?php echo $arrayIcon["Auteur"]." "."Auteur"; ?>
+        <?php else : ?>
+        <?php echo $arrayIcon[$escape($translate($propertyData['property']->label()))]." ".$escape($translate($propertyData['property']->label())); ?>
+        <?php endif?>
+        <?php endif; ?>
+        <?php if ('term' === $labelInfo): ?>
+        <span class="field-term">(<?php echo $escape($propertyData['property']->term()); ?>)</span>
+        <?php elseif ('vocab' === $labelInfo): ?>
+        <span class="field-term">(<?php echo $escape($propertyData['property']->vocabulary()->label()); ?>)</span>
+        <?php endif; ?>
+      </h6>
+        <div class="values">
+        <?php foreach ($propertyData['values'] as $value): ?>
+            <?php
+            $valueType = $value->type();
+            $class = ['value'];
+            if ('resource' == $valueType || strpos($valueType, 'resource') !== false) {
+                $class[] = 'resource';
+                $class[] = $escape($value->valueResource()->resourceName());
+            } elseif ('uri' == $valueType) {
+                $class[] = 'uri';
+            }
+            if (!$value->isPublic()) {
+                $class[] = 'private';
+            }
+            ?>
+            <div class="<?php echo implode(' ', $class); ?>" lang="<?php echo $escape($value->lang()); ?>">
+                <?php if ($language = $value->lang()): ?>
+                <span class="language"><?php echo $language; ?></span>
+                <?php endif; ?>
+                <?php echo $value->asHtml(); ?>
+            </div>
+        <?php endforeach; ?>
+        </div>
+    </div>
+<?php endforeach; ?>

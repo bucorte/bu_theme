@@ -1,0 +1,14 @@
+<?php $escape = $this->plugin('escapeHtml'); ?>
+<?php if (count($filters) > 0): ?>
+<div class="search-filters">
+  <?php $this->trigger('view.subList.before'); ?>
+
+    <?php foreach ($filters as $filterLabel => $filterValues): ?>
+    <div class="filter">
+        <?php foreach ($filterValues as $filterValue): ?>
+        <span class="filter-value"><?php echo $escape($filterValue); ?></span>
+        <?php endforeach; ?>
+    </div>
+    <?php endforeach; ?>
+</div>
+<?php endif; ?>
