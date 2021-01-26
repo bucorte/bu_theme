@@ -3,6 +3,12 @@
    let element = document.getElementsByTagName("header");
     element[0].style.background = 'none';
     element[0].style.height = "200px";
+    if(document.getElementById('similar')){
+	var a = document.createElement('a');
+	a.href = '#similar';
+	a.innerHTML = "<button class='button is-info'>Mots clés</button>";
+	document.getElementsByClassName("mediaNav")[0].append(a);
+    }
  };
 
 function openNav() {
@@ -26,8 +32,7 @@ $itemMedia = $item->media();
   <div class="mediaNav">
     <button class="button is-info" onclick="openNav()">Informations</button>
     <a href="#citation"><button class="button is-info" >Citation</button></a>
-    <a href="#mapping-section" ><button class="button is-info" >Carte</button></a>
-    <a href="#similar" ><button class="button is-info" >Mots clés</button></a>
+    
   </div>
   <?php if(count($itemMedia) > 1): ?>
     <?php foreach ($itemMedia as $url): ?>
